@@ -1,5 +1,4 @@
 import { Icon } from "@iconify/react";
-import { IProduto } from "../../interface";
 
 interface ModalDeleteProps {
   isOpen: boolean;

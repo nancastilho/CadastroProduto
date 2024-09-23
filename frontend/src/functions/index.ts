@@ -20,10 +20,10 @@ export const formatarDataBrasil = (dataUTCString: any) => {
 
 export function getDataFormatada(): string {
   const ano = dataAtual.getFullYear();
-  const mes = dataAtual.getMonth() + 1; // Janeiro é 0!
+  const mes = dataAtual.getMonth() + 1; 
   const dia = dataAtual.getDate();
 
-  // Adiciona zero à esquerda se o mês ou dia forem menores que 10
+ 
   const mesFormatado = mes < 10 ? `0${mes}` : mes;
   const diaFormatado = dia < 10 ? `0${dia}` : dia;
 
@@ -31,10 +31,8 @@ export function getDataFormatada(): string {
 }
 
 export function formatCPF(value: any) {
-  // Remove tudo que não é dígito
   const cpf = value.replace(/\D/g, "");
 
-  // Aplica a máscara (XXX.XXX.XXX-XX)
   const cpfMasked = cpf.replace(
     /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
     "$1.$2.$3-$4"

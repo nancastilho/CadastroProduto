@@ -1,39 +1,38 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../componentes/navbar";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { IProduto, IUser } from "../../interface";
-import { produtoService } from "../../service/produto";
+import { IUser } from "../../interface";
 import toast from "react-hot-toast";
-import { formatarDataBrasil, formatCurrency } from "../../functions";
 import { useNavigate } from "react-router-dom";
+import { userService } from "../../service/user";
 import ConfirmDeleteModal from "../../componentes/confirmaDelete/delete";
-import ProdutoModal from "./formProduto/form";
+import UserModal from "./formUser/form";
 
-const Home = () => {
+const ViewUsers = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectItem, setSelectItem] = useState<IProduto>();
+  const [selectItem, setSelectItem] = useState<IUser>();
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [isModalDeleteOpen, setModalDeleteOpen] = useState(false);
-  const [data, setData] = useState<IProduto[]>([]);
+  const [data, setData] = useState<IUser[]>([]);
   const [sortConfig, setSortConfig] = useState({
     key: "date",
     direction: "desc",
   });
   const [idDelete, setIdDelete] = useState(0);
 
-  const { admin, id } =
+  const { admin } =
     JSON.parse(localStorage.getItem("user") || "{}") || ({} as IUser);
 
   const handleDelete = (id: number) => {
-    produtoService
-      .deleteProduto(id)
+    userService
+      .deleteUsuario(id)
       .then(() => {
-        toast.success("Produto deletado com sucesso!", { duration: 2000 });
+        toast.success("Usuário deletado com sucesso!", { duration: 2000 });
         handleModalCloseDelete();
       })
       .catch(() => {
-        toast.error("Erro ao deletar produto!", { duration: 2000 });
+        toast.error("Erro ao deletar Usuário!", { duration: 2000 });
         handleModalCloseDelete();
       });
   };
@@ -47,7 +46,7 @@ const Home = () => {
     setModalDeleteOpen(false);
   };
 
-  const handleEditProduto = (data: IProduto) => {
+  const handleEditProduto = (data: IUser) => {
     setSelectItem(data);
     setOpenForm(true);
   };
@@ -75,10 +74,10 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      produtoService
-        .getProdutos()
-        .then((produtos) => {
-          setData(produtos);
+      userService
+        .getUsuario()
+        .then((usuarios) => {
+          setData(usuarios);
         })
         .catch((error) => {
           toast.error("Erro ao buscar os produtos:");
@@ -121,24 +120,25 @@ const Home = () => {
             href="/controle-estoque"
             className="text-teal-600 font-medium hover:text-teal-700"
           >
-            Controle de Estoque
+            Controle de Usuário
           </a>
         </div>
       </nav>
       <div className=" mx-auto w-full">
         <div className="w-full text-center">
           <h1 className="text-2xl font-bold border-b-4 border-teal-600 inline-block ">
-            Controle de Estoque
+            Controle de Usuário
           </h1>
         </div>
 
         <div className="flex justify-start mx-24 my-10">
           <button
+            disabled={!admin}
             onClick={handleModalOpen}
             className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-800 flex items-center"
           >
             <Icon icon={"mdi:plus"} className="mr-2" fontSize={20} /> Cadastrar
-            novo produto{" "}
+            novo usuário
           </button>
         </div>
 
@@ -217,37 +217,29 @@ const Home = () => {
           <table className="w-4/6 border-collapse">
             <thead>
               <tr className=" text-left">
-                <th className="py-3 px-4">Data de cadastro</th>
-                <th className="py-3 px-4">Nome</th>
-                <th className="py-3 px-4">Valor unitário</th>
-                <th className="py-3 px-4">Quantidade</th>
-                <th className="py-3 px-4">Valor total</th>
+                <th className="py-3 px-4">Nome completo</th>
+                <th className="py-3 px-4">CPF</th>
+                <th className="py-3 px-4">E-mail</th>
+                <th className="py-3 px-4">Nome usuário</th>
+                <th className="py-3 px-4">Cargo</th>
                 <th className="py-3 px-4">Ações</th>
               </tr>
             </thead>
             <tbody>
               {data.map((item, index) => (
                 <tr key={index} className="border-b">
-                  <td className="py-3 px-4">
-                    {formatarDataBrasil(item.dataCadastro)}
-                  </td>
                   <td className="py-3 px-4">{item.nome}</td>
+                  <td className="py-3 px-4">{item.cpf}</td>
+                  <td className="py-3 px-4">{item.email}</td>
+                  <td className="py-3 px-4">{item.nomeUsuario}</td>
                   <td className="py-3 px-4">
-                    {formatCurrency(item.precoVenda)}
-                  </td>
-                  <td className="py-3 px-4">{item.estoque}</td>
-                  <td className="py-3 px-4">
-                    {formatCurrency(item.estoque * item.precoVenda)}
+                    {item.admin ? "Administrador" : "Comum"}
                   </td>
                   <td className="py-3 px-4 flex items-center">
                     <button
-                      disabled={
-                        admin ? false : item.userId == id ? false : true
-                      }
+                      disabled={admin ? false : true}
                       className={`${
                         admin
-                          ? "text-red-900 hover:text-red-500 "
-                          : item.userId == id
                           ? "text-red-900 hover:text-red-500 "
                           : "text-red-500 "
                       } `}
@@ -260,13 +252,9 @@ const Home = () => {
                       />
                     </button>
                     <button
-                      disabled={
-                        admin ? false : item.userId == id ? false : true
-                      }
+                      disabled={admin ? false : true}
                       className={`${
                         admin
-                          ? "text-gray-900 hover:text-gray-500"
-                          : item.userId == id
                           ? "text-gray-900 hover:text-gray-500"
                           : "text-gray-500 "
                       } `}
@@ -326,7 +314,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <ProdutoModal
+      <UserModal
         isOpen={openForm}
         onClose={handleModalClose}
         receivedData={selectItem}
@@ -342,4 +330,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default ViewUsers;

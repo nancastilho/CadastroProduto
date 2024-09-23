@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { IProduto } from "../../interface";
 import toast from "react-hot-toast";
-import { produtoService } from "../../service/produto";
-import InputText from "../form/inputText";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { formatDate } from "../../functions";
+import { IProduto } from "../../../interface";
+import { produtoService } from "../../../service/produto";
+import InputText from "../../../componentes/form/inputText";
+import { formatDate } from "../../../functions";
 
 interface ProdutoModalProps {
   isOpen: boolean;
@@ -114,7 +114,9 @@ function ProdutoModal({ isOpen, onClose, receivedData }: ProdutoModalProps) {
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">{editMode ? "Gerenciar produto" : "Cadastrar novo produto"}</h2>
+          <h2 className="text-xl font-bold">
+            {editMode ? "Gerenciar produto" : "Cadastrar novo produto"}
+          </h2>
           <button onClick={HandleModalClose}>
             <Icon icon={"mdi:close"} fontSize={20} />
           </button>
