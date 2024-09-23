@@ -6,6 +6,7 @@ interface InputProps {
   onChange: (e:any) => void
   typeInput: string
   required?: boolean
+  disabledInput?: boolean
 }
 
 function InputText({
@@ -16,6 +17,7 @@ function InputText({
   onChange,
   typeInput,
   required,
+  disabledInput
 }: InputProps) {
   return (
     <div className="inline-flex flex-col w-full">
@@ -34,6 +36,7 @@ function InputText({
         id={label}
         name={name}
         required={required}
+        disabled={disabledInput}
         className="rounded-[3px] border-solid bg-white h-10 p-2"
         style={{
           borderWidth: "var(--Quantidade, 1px)",

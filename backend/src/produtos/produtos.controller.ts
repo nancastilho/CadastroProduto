@@ -26,7 +26,10 @@ export class ProdutosController {
 
   @Post()
   async create(@Body() createProdutoDto: Produto) {
-    return this.produtosService.create(createProdutoDto);
+    return this.produtosService.create({
+      ...createProdutoDto,
+      estoque: parseInt(`${createProdutoDto.estoque}`),
+    });
   }
 
   @Put(':id')

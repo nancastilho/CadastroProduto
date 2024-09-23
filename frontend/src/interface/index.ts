@@ -13,3 +13,12 @@ export interface IUser {
   foto?: string;
   admin: boolean;
 }
+
+export interface IProduto{
+  id?: number;
+  nome: string;
+  precoVenda: number; 
+  estoque: number;
+  dataCadastro?: string;
+  userId: number;
+}

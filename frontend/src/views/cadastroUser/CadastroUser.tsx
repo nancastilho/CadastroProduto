@@ -5,8 +5,10 @@ import { Icon } from "@iconify/react";
 import { IUser } from "../../interface";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { userService } from "../../service/user";
 
 const CadastroUser = () => {
+  const navigate = useNavigate();
   const [formValues, setFormValues] = useState<IUser>({
     cpf: "",
     senha: "",
@@ -14,20 +16,28 @@ const CadastroUser = () => {
     nome: "",
     nomeUsuario: "",
   });
+  const [confirmaSenha, setConfirmaSenha] = useState<string>("");
 
+  const options = [
+    { value: false, label: "Comum" },
+    { value: true, label: "Administrador" },
+  ];
   const handleInputChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const target = event.target as HTMLInputElement;
+    const target = event.target as HTMLInputElement | HTMLSelectElement;
     const { name, type, value } = target;
-    let newValue: any = value;
 
-    console.log(target);
+    let newValue: any = value;
 
     if (type === "checkbox") {
       newValue = target.checked ? 1 : 0;
+    }
+
+    if (name === "admin") {
+      newValue = value === "true";
     }
 
     setFormValues((prevValues) => ({
@@ -35,28 +45,26 @@ const CadastroUser = () => {
       [name]: newValue,
     }));
   };
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      const userData = await loginService.postForm(formValues);
-      localStorage.setItem("user", JSON.stringify(userData));
-      toast.success("Operação bem sucedida!", {
-        duration: 2000,
-      });
-      navigate("/home");
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error.response.data.message);
+    if (confirmaSenha === formValues.senha) {
+      try {
+        const userData = await userService.createUser(formValues);
+        localStorage.setItem("user", JSON.stringify(userData));
+        toast.success("Usuário cadastrado com sucesso!", {
+          duration: 2000,
+        });
+        navigate("/");
+      } catch (error: any) {
+        console.error(error);
+        toast.error(error.response.data.message);
+      }
+    } else {
+      toast.error("A senha esta diferente da confirmação de senha!");
     }
   };
-
-  const options = [
-    { value: false, label: "Comum" },
-    { value: true, label: "Administrador" },
-  ];
 
   return (
     <div className="mx-40 my-32 grid grid-cols-1 gap-4">
@@ -70,13 +78,11 @@ const CadastroUser = () => {
         </p>
       </div>
       <div className="flex items-end">
-        {/* Foto Grande */}
         <div className="relative">
           <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-4xl font-bold">
             S
           </div>
 
-          {/* Ícone de Câmera sobreposto */}
           <div className="absolute bottom-0 right-0 bg-white text-blue-700 w-6 h-6 rounded-full flex items-center justify-center">
             <Icon icon={"heroicons-outline:camera"} />
           </div>
@@ -84,8 +90,6 @@ const CadastroUser = () => {
         <span className="ml-2 text-blue-700 font-medium text-lg ">
           Carregar foto
         </span>
-
-        {/* Texto "Carregar foto" */}
       </div>
 
       <form className="grid grid-cols-3 gap-5 mt-10" onSubmit={handleSubmit}>
@@ -139,8 +143,8 @@ const CadastroUser = () => {
           required
           name="confirmaSenha"
           placeholder="Insira sua senha novamente"
-          value={""}
-          onChange={handleInputChange}
+          value={confirmaSenha}
+          onChange={(e) => setConfirmaSenha(e.target.value)}
         />
         <SelectField
           name="admin"

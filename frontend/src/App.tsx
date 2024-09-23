@@ -8,13 +8,11 @@ function App() {
   return (
     <Router>
       <Toaster position="top-right" reverseOrder={false} />
-      <div>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/cadastroUser" element={<CadastroUser />} />
           <Route path="/home" element={<Home />} />
         </Routes>
-      </div>
     </Router>
   );
 }
