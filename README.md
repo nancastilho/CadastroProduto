@@ -1,5 +1,5 @@
 
-# MVP Txai
+# MVP
 
 Um MPV com CRUD de usuários, produtos, e sistema de login.
 
