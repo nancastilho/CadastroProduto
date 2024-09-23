@@ -20,7 +20,7 @@ Instale as dependencias e rode o backend
 ```
 ### Atenção
 
-**.env**: tem um arquivo .envExemple deve ser renomeado para .env e feito a conexao correta com o MySQL
+**.env**: tem um arquivo .envExemple deve ser renomeado para .env e feito a conexao correta com o MySQL, caso necessario rodar o npx prisma migrate dev.
 
 
 ## Instalação Frontend
